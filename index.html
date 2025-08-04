@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SNSign API Example</title>
+</head>
+<body>
+    <h1>SNSign API Example</h1>
+    
+    <form id="signForm" enctype="multipart/form-data">
+        <h2>Required Fields</h2>
+        
+        <h3>Certificate Source (choose one option):</h3>
+        
+        <input type="radio" id="useUrls" name="certSource" value="urls" checked>
+        <label for="useUrls">Use URLs</label>
+        <br><br>
+        
+        <div id="urlFields">
+            <label for="p12">P12 Certificate URL:</label>
+            <input type="url" id="p12" name="p12">
+            <br><br>
+            
+            <label for="mp">Mobile Provision URL:</label>
+            <input type="url" id="mp" name="mp">
+            <br><br>
+        </div>
+        
+        <input type="radio" id="useFiles" name="certSource" value="files">
+        <label for="useFiles">Upload Files</label>
+        <br><br>
+        
+        <div id="fileFields" style="display: none;">
+            <label for="p12File">Upload P12 Certificate:</label>
+            <input type="file" id="p12File" name="p12File" accept=".p12">
+            <br><br>
+            
+            <label for="mpFile">Upload MobileProvision:</label>
+            <input type="file" id="mpFile" name="mpFile" accept=".mobileprovision">
+            <br><br>
+            
+            <button type="button" id="uploadCerts">Upload Certificates</button>
+            <br><br>
+            <div id="uploadStatus"></div>
+        </div>
+        
+        <label for="pass">Certificate Password:</label>
+        <input type="password" id="pass" name="pass">
+        <br><br>
+        
+        <h2>IPA Source (choose one)</h2>
+        
+        <label for="ipa">Upload IPA File:</label>
+        <input type="file" id="ipa" name="ipa" accept=".ipa">
+        <br><br>
+        
+        <label for="ipaurl">OR IPA URL:</label>
+        <input type="url" id="ipaurl" name="ipaurl" placeholder="https://example.com/app.ipa">
+        <br><br>
+        
+        <h2>Basic Signing Options</h2>
+        
+        <label for="bundleId">Bundle ID:</label>
+        <input type="text" id="bundleId" name="bundleId" placeholder="com.example.app">
+        <br><br>
+        
+        <label for="bundleName">Bundle Name:</label>
+        <input type="text" id="bundleName" name="bundleName" placeholder="My App">
+        <br><br>
+        
+        <label for="bundleVersion">Bundle Version:</label>
+        <input type="text" id="bundleVersion" name="bundleVersion" placeholder="1.0.0">
+        <br><br>
+        
+        <label for="zipLevel">Zip Compression Level (0-9):</label>
+        <input type="number" id="zipLevel" name="zipLevel" min="0" max="9" placeholder="6">
+        <br><br>
+        
+        <input type="checkbox" id="weak" name="weak" value="true">
+        <label for="weak">Weak signing</label>
+        <br><br>
+        
+        <input type="checkbox" id="adhoc" name="adhoc" value="true">
+        <label for="adhoc">Ad-hoc signing</label>
+        <br><br>
+        
+        <input type="checkbox" id="debug" name="debug" value="true">
+        <label for="debug">Debug mode</label>
+        <br><br>
+        
+        <input type="checkbox" id="force" name="force" value="true">
+        <label for="force">Force signing</label>
+        <br><br>
+        
+        <h2>Cyan Modification Options</h2>
+        
+        <label for="cyanFiles">Cyan Files (.cyan):</label>
+        <input type="file" id="cyanFiles" name="cyanFiles" multiple accept=".cyan">
+        <br><br>
+        
+        <label for="tweakFiles">Tweak Files:</label>
+        <input type="file" id="tweakFiles" name="tweakFiles" multiple>
+        <br><br>
+        
+        <label for="iconFile">Icon File:</label>
+        <input type="file" id="iconFile" name="iconFile" accept="image/*">
+        <br><br>
+        
+        <label for="plistFile">Plist File:</label>
+        <input type="file" id="plistFile" name="plistFile" accept=".plist">
+        <br><br>
+        
+        <label for="entitlementsFile">Entitlements File:</label>
+        <input type="file" id="entitlementsFile" name="entitlementsFile">
+        <br><br>
+        
+        <label for="cyanAppName">App Name:</label>
+        <input type="text" id="cyanAppName" name="cyanAppName" placeholder="Modified App Name">
+        <br><br>
+        
+        <label for="cyanVersion">Version:</label>
+        <input type="text" id="cyanVersion" name="cyanVersion" placeholder="2.0.0">
+        <br><br>
+        
+        <label for="cyanBundleId">Bundle ID:</label>
+        <input type="text" id="cyanBundleId" name="cyanBundleId" placeholder="com.modified.app">
+        <br><br>
+        
+        <label for="cyanMinimumOS">Minimum OS:</label>
+        <input type="text" id="cyanMinimumOS" name="cyanMinimumOS" placeholder="12.0">
+        <br><br>
+        
+        <label for="cyanCompressionLevel">Compression Level (0-9):</label>
+        <input type="number" id="cyanCompressionLevel" name="cyanCompressionLevel" min="0" max="9" placeholder="6">
+        <br><br>
+        
+        <input type="checkbox" id="removeSupportedDevices" name="removeSupportedDevices" value="true">
+        <label for="removeSupportedDevices">Remove supported devices</label>
+        <br><br>
+        
+        <input type="checkbox" id="removeWatch" name="removeWatch" value="true">
+        <label for="removeWatch">Remove watch app</label>
+        <br><br>
+        
+        <input type="checkbox" id="enableDocuments" name="enableDocuments" value="true">
+        <label for="enableDocuments">Enable documents</label>
+        <br><br>
+        
+        <input type="checkbox" id="cyanFakeSign" name="cyanFakeSign" value="true">
+        <label for="cyanFakeSign">Fake sign</label>
+        <br><br>
+        
+        <input type="checkbox" id="thinBinaries" name="thinBinaries" value="true">
+        <label for="thinBinaries">Thin binaries</label>
+        <br><br>
+        
+        <input type="checkbox" id="removeExtensions" name="removeExtensions" value="true">
+        <label for="removeExtensions">Remove extensions</label>
+        <br><br>
+        
+        <input type="checkbox" id="removeEncryptedExtensions" name="removeEncryptedExtensions" value="true">
+        <label for="removeEncryptedExtensions">Remove encrypted extensions</label>
+        <br><br>
+        
+        <input type="checkbox" id="ignoreEncrypted" name="ignoreEncrypted" value="true">
+        <label for="ignoreEncrypted">Ignore encrypted</label>
+        <br><br>
+        
+        <input type="checkbox" id="overwrite" name="overwrite" value="true">
+        <label for="overwrite">Overwrite existing</label>
+        <br><br>
+        
+        <button type="submit">Start Signing Process</button>
+    </form>
+    
+    <div id="status"></div>
+    <div id="progress"></div>
+    <div id="result"></div>
+
+    <script>
+        const form = document.getElementById('signForm');
+        const statusDiv = document.getElementById('status');
+        const progressDiv = document.getElementById('progress');
+        const resultDiv = document.getElementById('result');
+        const uploadStatus = document.getElementById('uploadStatus');
+        
+        let cryptoFolder = null;
+        let progressInterval = null;
+        let uploadedCertUrls = { p12: '', mp: '' };
+
+        // Handle certificate source radio buttons
+        document.querySelectorAll('input[name="certSource"]').forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                const urlFields = document.getElementById('urlFields');
+                const fileFields = document.getElementById('fileFields');
+                
+                if (e.target.value === 'urls') {
+                    urlFields.style.display = 'block';
+                    fileFields.style.display = 'none';
+                    // Make URL fields required
+                    document.getElementById('p12').required = true;
+                    document.getElementById('mp').required = true;
+                } else {
+                    urlFields.style.display = 'none';
+                    fileFields.style.display = 'block';
+                    // Remove URL field requirements
+                    document.getElementById('p12').required = false;
+                    document.getElementById('mp').required = false;
+                }
+            });
+        });
+
+        // Handle certificate file upload
+        document.getElementById('uploadCerts').addEventListener('click', async () => {
+            const p12Input = document.getElementById('p12File');
+            const mpInput = document.getElementById('mpFile');
+            
+            if (!p12Input.files[0] || !mpInput.files[0]) {
+                uploadStatus.innerHTML = '<p style="color: red;">Please select both P12 and MobileProvision files</p>';
+                return;
+            }
+            
+            uploadStatus.innerHTML = '<p>Uploading certificates...</p>';
+            
+            const formData = new FormData();
+            formData.append('files', p12Input.files[0]);
+            formData.append('files', mpInput.files[0]);
+            
+            try {
+                const response = await fetch('https://api.snsign.pro/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Store the uploaded URLs
+                    data.files.forEach(file => {
+                        if (file.type === 'certificate') {
+                            uploadedCertUrls.p12 = file.url;
+                        } else if (file.type === 'provisioning') {
+                            uploadedCertUrls.mp = file.url;
+                        }
+                    });
+                    
+                    uploadStatus.innerHTML = `
+                        <p style="color: green;">Certificates uploaded successfully!</p>
+                        <p>P12: ${uploadedCertUrls.p12}</p>
+                        <p>MobileProvision: ${uploadedCertUrls.mp}</p>
+                    `;
+                } else {
+                    uploadStatus.innerHTML = `<p style="color: red;">Upload failed: ${data.error}</p>`;
+                }
+            } catch (error) {
+                uploadStatus.innerHTML = `<p style="color: red;">Upload error: ${error.message}</p>`;
+            }
+        });
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            statusDiv.innerHTML = '<p>Starting signing process...</p>';
+            progressDiv.innerHTML = '';
+            resultDiv.innerHTML = '';
+            
+            const formData = new FormData(form);
+            
+            // Handle certificate source
+            const certSource = document.querySelector('input[name="certSource"]:checked').value;
+            
+            if (certSource === 'files') {
+                // Use uploaded certificate URLs
+                if (!uploadedCertUrls.p12 || !uploadedCertUrls.mp) {
+                    statusDiv.innerHTML = '<p style="color: red;">Please upload certificates first</p>';
+                    return;
+                }
+                formData.set('p12', uploadedCertUrls.p12);
+                formData.set('mp', uploadedCertUrls.mp);
+            }
+            // If using URLs, the form data already contains p12 and mp values
+            
+            // Remove certSource and certFiles from formData as they're not needed by the API
+            formData.delete('certSource');
+            formData.delete('p12File');
+            formData.delete('mpFile');
+            
+            try {
+                const response = await fetch('https://api.snsign.pro/sign', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    cryptoFolder = data.cryptoFolder;
+                    statusDiv.innerHTML = '<p>Process started successfully!</p>';
+                    startProgressTracking();
+                } else {
+                    statusDiv.innerHTML = `<p>Error: ${data.error}</p>`;
+                }
+            } catch (error) {
+                statusDiv.innerHTML = `<p>Network error: ${error.message}</p>`;
+            }
+        });
+
+        function startProgressTracking() {
+            if (progressInterval) clearInterval(progressInterval);
+            
+            progressInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`https://api.snsign.pro/sign/progress/${cryptoFolder}`);
+                    const data = await response.json();
+                    
+                    if (data.percent >= 0) {
+                        progressDiv.innerHTML = `
+                            <p>Progress: ${data.percent}%</p>
+                            <p>Status: ${data.message}</p>
+                        `;
+                        
+                        if (data.percent === 100 && data.result) {
+                            clearInterval(progressInterval);
+                            displayResult(data.result);
+                        }
+                    } else {
+                        // Error occurred
+                        clearInterval(progressInterval);
+                        progressDiv.innerHTML = `<p>Error: ${data.message}</p>`;
+                    }
+                } catch (error) {
+                    console.error('Progress tracking error:', error);
+                }
+            }, 2000);
+        }
+
+        function displayResult(result) {
+            resultDiv.innerHTML = `
+                <h3>Signing Complete!</h3>
+                <p><strong>App Name:</strong> ${result.metadata.bundleName}</p>
+                <p><strong>Bundle ID:</strong> ${result.metadata.bundleId}</p>
+                <p><strong>Version:</strong> ${result.metadata.bundleVersion}</p>
+                <p><strong>Download IPA:</strong> <a href="${result.signedIpaUrl}" target="_blank">Download</a></p>
+                <p><strong>Install Link:</strong> <a href="${result.installLink}">Install on Device</a></p>
+            `;
+        }
+    </script>
+</body>
+</html>
